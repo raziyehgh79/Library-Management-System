@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Loans - Library Management System</title>
+    <title>امانت‌های من - سامانه مدیریت کتابخانه</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,23 +12,23 @@
             <div class="header-content">
                 <a href="dashboard.html" class="logo">
                     <span class="logo-icon">📚</span>
-                    <span>Library Management</span>
+                    <span>مدیریت کتابخانه کاریار</span>
                 </a>
 
-                <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <button class="menu-toggle" id="menuToggle" aria-label="تغییر وضعیت منو" aria-expanded="false">
                     &#9776;
                 </button>
 
                 <nav class="nav" id="primaryNav">
-                    <a href="dashboard.html">Dashboard</a>
-                    <a href="books.html">Browse Books</a>
-                    <a href="my-loans.html" class="active">My Loans</a>
-                    <a href="#" id="logoutBtn" style="color: var(--danger);">Logout</a>
+                    <a href="dashboard.html">داشبورد</a>
+                    <a href="books.html">مرور کتاب‌ها</a>
+                    <a href="my-loans.html" class="active">امانت‌های من</a>
+                    <a href="#" id="logoutBtn" style="color: var(--danger);">خروج از حساب</a>
                 </nav>
 
                 <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">S</div>
-                    <span class="user-name" id="userName">Student</span>
+                    <div class="user-avatar" id="userAvatar">د</div>
+                    <span class="user-name" id="userName">دانشجو</span>
                 </div>
             </div>
         </div>
@@ -37,48 +37,48 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">My Loans</h1>
-                <p class="page-subtitle">Track your borrowed titles, return books when finished, and monitor due dates.</p>
+                <h1 class="page-title">امانت‌های من</h1>
+                <p class="page-subtitle">پیگیری سوابق کتاب‌های امانت‌گرفته‌شده، تاریخچه مهلت‌های تحویل و بازگرداندن کتاب‌ها به کتابخانه.</p>
             </div>
             
             <div id="loansAlert"></div>
 
-            <!-- Loan Statistics -->
+            <!-- آمار امانت‌ها -->
             <div class="grid grid-3" style="margin-bottom: 2rem;">
                 <div class="card stat-card">
                     <div class="stat-number" id="totalLoans">—</div>
-                    <div class="stat-label">Total Loans</div>
+                    <div class="stat-label">کل کتاب‌های امانت‌گرفته‌شده</div>
                 </div>
                 <div class="card stat-card">
                     <div class="stat-number" id="activeLoans" style="color: var(--warning);">—</div>
-                    <div class="stat-label">Active Loans</div>
+                    <div class="stat-label">امانت‌های فعال (نزد شما)</div>
                 </div>
                 <div class="card stat-card stat-success">
                     <div class="stat-number" id="returnedLoans">—</div>
-                    <div class="stat-label">Returned Books</div>
+                    <div class="stat-label">کتاب‌های بازگردانده‌شده</div>
                 </div>
             </div>
 
-            <!-- Loans Table Card -->
+            <!-- جدول سوابق امانت -->
             <div class="card" id="tableCard">
                 <div class="card-header">
-                    <h2 class="card-title">Borrowing History</h2>
-                    <span id="loansCountHeader" style="color: var(--text-muted); font-size: 0.9rem;">Total: — loans</span>
+                    <h2 class="card-title">تاریخچه و سوابق امانت کتاب</h2>
+                    <span id="loansCountHeader" style="color: var(--text-muted); font-size: 0.9rem;">مجموع: — مورد</span>
                 </div>
                 
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Book Title & ISBN</th>
-                                <th>Author</th>
-                                <th>Timeline</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>عنوان کتاب و شابک (ISBN)</th>
+                                <th>نویسنده</th>
+                                <th>زمان‌بندی و مهلت تحویل</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
                             </tr>
                         </thead>
                         <tbody id="loansTableBody">
-                            <!-- Injected dynamically by loans.js -->
+                            <!-- ردیف‌های جدول توسط loans.js به صورت پویا رندر می‌شوند -->
                         </tbody>
                     </table>
                 </div>
@@ -89,11 +89,11 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project</p>
+            <p>&copy; ۱۴۰۵ سامانه مدیریت کتابخانه &middot; پروژه نهایی جاوااسکریپت</p>
         </div>
     </footer>
 
-    <!-- Loans Logic ES Module -->
+    <!-- اسکریپت صفحه امانت‌ها -->
     <script type="module" src="js/loans.js"></script>
 </body>
 </html>

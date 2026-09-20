@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Books - Library Management System</title>
+    <title>مرور کتاب‌ها - سامانه مدیریت کتابخانه</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,23 +12,23 @@
             <div class="header-content">
                 <a href="dashboard.html" class="logo">
                     <span class="logo-icon">📚</span>
-                    <span>Library Management</span>
+                    <span>مدیریت کتابخانه کاریار</span>
                 </a>
 
-                <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <button class="menu-toggle" id="menuToggle" aria-label="تغییر وضعیت منو" aria-expanded="false">
                     &#9776;
                 </button>
 
                 <nav class="nav" id="primaryNav">
-                    <a href="dashboard.html">Dashboard</a>
-                    <a href="books.html" class="active">Browse Books</a>
-                    <a href="my-loans.html">My Loans</a>
-                    <a href="#" id="logoutBtn" style="color: var(--danger);">Logout</a>
+                    <a href="dashboard.html">داشبورد</a>
+                    <a href="books.html" class="active">مرور کتاب‌ها</a>
+                    <a href="my-loans.html">امانت‌های من</a>
+                    <a href="#" id="logoutBtn" style="color: var(--danger);">خروج از حساب</a>
                 </nav>
 
                 <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">S</div>
-                    <span class="user-name" id="userName">Student</span>
+                    <div class="user-avatar" id="userAvatar">د</div>
+                    <span class="user-name" id="userName">دانشجو</span>
                 </div>
             </div>
         </div>
@@ -37,61 +37,61 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">Browse Books</h1>
-                <p class="page-subtitle">Explore the collection, filter by genre, and borrow titles directly to your account.</p>
+                <h1 class="page-title">کاتالوگ کتاب‌ها</h1>
+                <p class="page-subtitle">کاتالوگ عناوین را مشاهده نموده، بر اساس موضوع فیلتر کنید و کتاب مورد نظر را به صورت زنده به امانت بگیرید.</p>
             </div>
             
             <div id="booksAlert"></div>
 
-            <!-- Search and Filter Controls -->
+            <!-- ابزارهای جستجو و فیلتر -->
             <div class="filter-bar">
                 <div class="search-input-wrapper">
                     <input 
                         type="text" 
                         id="searchInput" 
                         class="form-input" 
-                        placeholder="🔍 Search books by title, author, or ISBN..." 
-                        aria-label="Search books"
+                        placeholder="🔍 جستجوی کتاب بر اساس عنوان، نویسنده یا شابک (ISBN)..." 
+                        aria-label="جستجوی کتاب"
                     >
                 </div>
                 <div class="filter-select-wrapper">
-                    <select id="categoryFilter" class="form-select" aria-label="Filter by category">
-                        <option value="">All Categories</option>
+                    <select id="categoryFilter" class="form-select" aria-label="فیلتر موضوعی">
+                        <option value="">همه دسته‌بندی‌ها</option>
                     </select>
                 </div>
                 <div class="filter-select-wrapper">
-                    <select id="availabilityFilter" class="form-select" aria-label="Filter by availability">
-                        <option value="all">All Availability</option>
-                        <option value="available">Available Only</option>
-                        <option value="unavailable">Unavailable Only</option>
+                    <select id="availabilityFilter" class="form-select" aria-label="فیلتر وضعیت موجودی">
+                        <option value="all">همه وضعیت‌ها</option>
+                        <option value="available">فقط کتاب‌های موجود</option>
+                        <option value="unavailable">فقط کتاب‌های ناموجود</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Dynamic Books Grid Container -->
+            <!-- گرید داینامیک نمایش کتاب‌ها -->
             <div class="grid grid-3" id="booksGrid">
-                <!-- Book cards or skeleton loaders will be injected dynamically by books.js -->
+                <!-- کارت‌های کتاب و انیمیشن‌های لودینگ توسط books.js تزریق می‌شوند -->
             </div>
         </div>
     </main>
 
-    <!-- Book Details Modal -->
+    <!-- پنجره مودال جزئیات کامل کتاب -->
     <div class="modal" id="bookModal" role="dialog" aria-modal="true" aria-hidden="true">
         <div class="modal-content">
-            <button class="modal-close-btn" id="modalClose" aria-label="Close modal">&times;</button>
+            <button class="modal-close-btn" id="modalClose" aria-label="بستن پنجره">&times;</button>
             <div id="modalBody">
-                <!-- Injected dynamically by books.js -->
+                <!-- جزئیات کتاب توسط books.js تزریق می‌شود -->
             </div>
         </div>
     </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project</p>
+            <p>&copy; ۱۴۰۵ سامانه مدیریت کتابخانه &middot; پروژه نهایی جاوااسکریپت</p>
         </div>
     </footer>
 
-    <!-- Books Logic ES Module -->
+    <!-- اسکریپت صفحه کتاب‌ها -->
     <script type="module" src="js/books.js"></script>
 </body>
 </html>

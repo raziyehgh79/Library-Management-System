@@ -1,18 +1,18 @@
 /**
- * Library Management System - Student Dashboard Logic
+ * سامانه مدیریت کتابخانه - منطق داشبورد دانشجو (Dashboard Logic)
  * 
- * Protected page that loads current student profile and statistics from /api/auth/me.
+ * صفحه محافظت‌شده جهت دریافت و نمایش اطلاعات کاربر و آمار کتابخانه از اندپوینت /api/auth/me.
  */
 
 import { api } from './api.js';
 import { requireAuth, setCurrentUser, getCurrentUser } from './auth.js';
 import { setupHeaderUser, formatDate, showAlert } from './utils.js';
 
-// Route guard: Redirect unauthenticated visitors back to login.html
+// گارد صفحه: جلوگیری از دسترسی کاربران لاگین‌نشده
 requireAuth();
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialize header user avatar and logout button
+  // مقداردهی اولیه آواتار و نام کاربر در هدر و دکمه خروج
   setupHeaderUser();
 
   const studentNameEl = document.getElementById('studentName');
@@ -22,64 +22,65 @@ document.addEventListener('DOMContentLoaded', async () => {
   const statsContainer = document.getElementById('statsContainer');
   const profileCardEl = document.getElementById('profileCard');
 
-  // Pre-populate with cached user data if available (prevents layout shift / blank name)
+  // نمایش فوری اطلاعات کش‌شده قبلی کاربر برای جلوگیری از پرش صفحه
   const cachedUser = getCurrentUser();
   if (cachedUser && studentNameEl) {
     studentNameEl.textContent = cachedUser.firstName 
       ? `${cachedUser.firstName} ${cachedUser.lastName || ''}`.trim() 
-      : (cachedUser.email || 'Student');
+      : (cachedUser.email || 'دانشجو');
   }
 
   /**
-   * Fetches fresh user profile and library statistics from the backend.
+   * دریافت پروفایل تازه و آمار زنده امانت‌ها و کتاب‌ها از سرور.
    */
   async function loadDashboardData() {
     try {
       if (statsContainer) statsContainer.classList.add('loading-pulse');
 
-      // Call protected /api/auth/me endpoint (auth header injected automatically by api.js)
+      // فراخوانی اندپوینت محافظت‌شده /api/auth/me
       const response = await api.get('/auth/me');
 
       if (!response || !response.success || !response.data) {
-        throw new Error('Unexpected response format from profile endpoint');
+        throw new Error('فرمت پاسخ سرور برای دریافت پروفایل نامعتبر است.');
       }
 
       const { user, stats } = response.data;
 
-      // Update cached user profile with latest details
+      // به‌روزرسانی اطلاعات کاربر در کش
       if (user) {
         setCurrentUser(user);
         setupHeaderUser();
 
-        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Student';
+        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'دانشجو';
         if (studentNameEl) studentNameEl.textContent = fullName;
 
-        // Render detailed student profile card
+        // رندر کارت مشخصات فردی دانشجو به زبان فارسی
         if (profileCardEl) {
+          const roleLabel = user.role === 'admin' ? 'مدیر سیستم' : (user.role === 'librarian' ? 'کتابدار' : 'دانشجو (عضو)');
           profileCardEl.innerHTML = `
             <div class="profile-details-grid">
               <div class="profile-item">
-                <span class="profile-label">Email:</span>
+                <span class="profile-label">ایمیل دانشجو:</span>
                 <span class="profile-value">${user.email || '—'}</span>
               </div>
               <div class="profile-item">
-                <span class="profile-label">Student ID:</span>
+                <span class="profile-label">شماره دانشجویی:</span>
                 <span class="profile-value">${user.studentId || '—'}</span>
               </div>
               <div class="profile-item">
-                <span class="profile-label">Role:</span>
-                <span class="profile-value"><span class="badge badge-info">${user.role || 'member'}</span></span>
+                <span class="profile-label">نقش در سامانه:</span>
+                <span class="profile-value"><span class="badge badge-info">${roleLabel}</span></span>
               </div>
               <div class="profile-item">
-                <span class="profile-label">Group:</span>
-                <span class="profile-value">${user.group || 'A'}</span>
+                <span class="profile-label">گروه تحصیلی:</span>
+                <span class="profile-value">${user.group || 'الف'}</span>
               </div>
               <div class="profile-item">
-                <span class="profile-label">Account Status:</span>
-                <span class="profile-value"><span class="badge badge-success">Active</span></span>
+                <span class="profile-label">وضعیت عضویت:</span>
+                <span class="profile-value"><span class="badge badge-success">فعال</span></span>
               </div>
               <div class="profile-item">
-                <span class="profile-label">Last Login:</span>
+                <span class="profile-label">آخرین زمان ورود:</span>
                 <span class="profile-value">${formatDate(user.lastLogin || new Date())}</span>
               </div>
             </div>
@@ -87,18 +88,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      // Populate live statistics
+      // به‌روزرسانی کارت‌های آمار زنده
       if (stats) {
-        if (activeLoansEl) activeLoansEl.textContent = stats.activeLoans ?? 0;
-        if (availableBooksEl) availableBooksEl.textContent = stats.availableBooks ?? 0;
+        if (activeLoansEl) activeLoansEl.textContent = Number(stats.activeLoans ?? 0).toLocaleString('fa-IR');
+        if (availableBooksEl) availableBooksEl.textContent = Number(stats.availableBooks ?? 0).toLocaleString('fa-IR');
       }
 
     } catch (error) {
-      console.error('[Dashboard] Error loading dashboard data:', error);
+      console.error('[داشبورد] خطا در دریافت اطلاعات:', error);
       if (alertContainer) {
         showAlert(
           alertContainer,
-          'Unable to load latest statistics. Please refresh or try again later.',
+          'امکان دریافت جدیدترین آمار وجود ندارد. لطفاً صفحه را رفرش نمایید یا بعداً تلاش کنید.',
           'error',
           0
         );

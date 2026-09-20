@@ -1,25 +1,24 @@
 /**
- * Library Management System - Application Configuration
+ * سامانه مدیریت کتابخانه - ماژول پیکربندی برنامه
  * 
- * Centralized configuration module.
- * Keeping the API base URL and storage constants in one place ensures
- * that any environment changes can be made with a single update,
- * without having to touch individual page scripts.
+ * این فایل شامل تمام تنظیمات ثابت و سراسری پروژه است.
+ * قرار دادن آدرس سرور و متغیرهای کلیدی در یک فایل مرکزی،
+ * باعث می‌شود در صورت تغییر آدرس سرور نیازی به تغییر در تک‌تک فایل‌ها نباشد.
  */
 
-// Verified backend API base URL (Course 15 / Hadi Tabatabaei server)
-// Note: The previous liara.run URL is down (HTTP 503), whereas this URL is active.
+// آدرس پایه و تاییدشده سرور بک‌اند (دوره ۱۵ کاریار)
+// سرور liara.run دارای خطای ۵۰۳ است و سرور زیر فعال و پاسخگو می‌باشد.
 export const API_BASE_URL = 'https://haditabatabaei.dev/api';
 
-// Book list cache duration: 5 minutes (in milliseconds)
-// 5 minutes * 60 seconds * 1000 milliseconds = 300,000 ms
+// مدت زمان اعتبار کش فهرست کتاب‌ها: ۵ دقیقه (به میلی‌ثانیه)
+// ۵ دقیقه * ۶۰ ثانیه * ۱۰۰۰ میلی‌ثانیه = ۳۰۰,۰۰۰ میلی‌ثانیه
 export const CACHE_TTL = 5 * 60 * 1000;
 
-// Cookie key used to store the JWT authentication token
+// نام کوکی جهت ذخیره‌سازی توکن احراز هویت JWT
 export const TOKEN_COOKIE_NAME = 'library_token';
 
-// LocalStorage key used to store the cached books response
+// کلید ذخیره‌سازی کش کتاب‌ها در localStorage
 export const BOOKS_CACHE_KEY = 'library_books_cache';
 
-// LocalStorage key used to store current user info for instant UI hydration
+// کلید ذخیره‌سازی اطلاعات اولیه کاربر در localStorage برای لود آنی
 export const USER_STORAGE_KEY = 'library_current_user';

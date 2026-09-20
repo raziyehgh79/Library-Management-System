@@ -1,22 +1,22 @@
 /**
- * Library Management System - Cache Module
+ * سامانه مدیریت کتابخانه - ماژول مدیریت کش کتاب‌ها (Cache Module)
  * 
- * Implements a 5-minute client-side cache using localStorage for the books API response.
- * Demonstrates proper cache expiration (TTL) and cache invalidation workflows.
+ * پیاده‌سازی کش ۵ دقیقه‌ای نتایج کتاب‌ها با استفاده از localStorage.
+ * این ماژول دارای مکانیزم بررسی انقضای زمانی (TTL) و باطل‌سازی خودکار (Invalidation) است.
  */
 
 import { BOOKS_CACHE_KEY, CACHE_TTL } from './config.js';
 
 /**
- * Retrieves cached books from localStorage if available and not expired.
+ * دریافت فهرست کتاب‌ها از کش localStorage در صورت معتبر بودن و نگذشتن ۵ دقیقه.
  * 
- * Cache Flow:
- * 1. Read JSON string from localStorage
- * 2. If present, compare (Date.now() - timestamp) against CACHE_TTL (5 minutes)
- * 3. If within 5 minutes, return the cached data array
- * 4. If expired, clean up the stale cache and return null
+ * روند کار:
+ * ۱. خواندن رشته ذخیره شده از localStorage
+ * ۲. محاسبه زمان سپری شده: Date.now() - timestamp
+ * ۳. اگر زمان کمتر از ۵ دقیقه باشد، داده کش شده برگردانده می‌شود.
+ * ۴. اگر ۵ دقیقه گذشته باشد، کش کهنه پاک شده و null برگردانده می‌شود تا درخواست جدید به سرور برود.
  * 
- * @returns {Array|null} Array of books, or null if cache is missing/expired
+ * @returns {Array|null} آرایه کتاب‌ها یا null در صورت نبود یا انقضای کش
  */
 export function getBooksCache() {
   try {
@@ -27,27 +27,27 @@ export function getBooksCache() {
     const now = Date.now();
     const age = now - (cached.timestamp || 0);
 
-    // Is the cached data younger than 5 minutes?
+    // آیا سن داده کمتر از ۵ دقیقه است؟
     if (age < CACHE_TTL && Array.isArray(cached.data)) {
-      console.info(`[Cache] Using cached books (${Math.round(age / 1000)}s old)`);
+      console.info(`[کش] استفاده از داده‌های کش‌شده کتاب‌ها (عمر کش: ${Math.round(age / 1000)} ثانیه)`);
       return cached.data;
     }
 
-    // Cache is expired - remove it
-    console.info('[Cache] Books cache expired, invalidating');
+    // کش منقضی شده است
+    console.info('[کش] زمان ۵ دقیقه کش به پایان رسید، باطل‌سازی و دریافت مجدد از سرور');
     localStorage.removeItem(BOOKS_CACHE_KEY);
     return null;
   } catch (error) {
-    console.warn('[Cache] Error reading books cache:', error);
+    console.warn('[کش] خطا در خواندن کش کتاب‌ها:', error);
     localStorage.removeItem(BOOKS_CACHE_KEY);
     return null;
   }
 }
 
 /**
- * Saves books array to localStorage with current timestamp.
+ * ذخیره داده‌های دریافتی از سرور در کش localStorage به همراه برچسب زمانی فعلی.
  * 
- * @param {Array} books - Array of book objects received from the API
+ * @param {Array} books - آرایه کتاب‌های دریافتی از سرور
  */
 export function setBooksCache(books) {
   try {
@@ -56,26 +56,26 @@ export function setBooksCache(books) {
       timestamp: Date.now()
     };
     localStorage.setItem(BOOKS_CACHE_KEY, JSON.stringify(payload));
-    console.info(`[Cache] Saved ${books.length} books to cache (valid for 5 mins)`);
+    console.info(`[کش] تعداد ${books.length} کتاب با موفقیت در کش ذخیره شد (اعتبار: ۵ دقیقه)`);
   } catch (error) {
-    console.error('[Cache] Failed to write books cache to localStorage:', error);
+    console.error('[کش] خطا در ذخیره کش کتاب‌ها:', error);
   }
 }
 
 /**
- * Explicitly invalidates (deletes) the books cache.
+ * باطل‌سازی مستقیم و دستی کش کتاب‌ها (Cache Invalidation).
  * 
- * CRITICAL ARCHITECTURAL DECISION:
- * When a user borrows or returns a book, the available copy count on the server changes.
- * If we kept the 5-minute cache, the user would see stale availability numbers.
- * Therefore, calling clearBooksCache() immediately after a successful borrow or return
- * guarantees the next books request fetches fresh data from the backend.
+ * تصمیم معماری بسیار مهم:
+ * زمانی که کاربری کتابی را امانت می‌گیرد یا پس می‌دهد، تعداد نسخه‌های موجود آن در سرور تغییر می‌کند.
+ * اگر کش را پاک نکنیم، کاربر تا ۵ دقیقه اطلاعات قدیمی را خواهد دید.
+ * بنابراین بلافاصله پس از امانت گرفتن یا بازگرداندن کتاب، این تابع فراخوانی می‌شود
+ * تا در مراجعه بعدی کاربر به صفحه کتاب‌ها، داده‌های تازه از سرور دریافت شوند.
  */
 export function clearBooksCache() {
   try {
     localStorage.removeItem(BOOKS_CACHE_KEY);
-    console.info('[Cache] Books cache successfully cleared.');
+    console.info('[کش] کش کتاب‌ها با موفقیت باطل و پاک‌سازی شد.');
   } catch (error) {
-    console.error('[Cache] Failed to clear books cache:', error);
+    console.error('[کش] خطا در پاک‌سازی کش کتاب‌ها:', error);
   }
 }

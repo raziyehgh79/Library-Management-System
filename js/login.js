@@ -1,15 +1,15 @@
 /**
- * Library Management System - Login Page Logic
+ * سامانه مدیریت کتابخانه - منطق صفحه ورود (Login Logic)
  * 
- * Handles client-side validation, authentication requests, loading states,
- * cookie storage of JWT, and redirection.
+ * شامل اعتبارسنجی سمت کلاینت، درخواست به API ورود، وضعیت لودینگ،
+ * ذخیره‌سازی توکن JWT در کوکی و هدایت به داشبورد.
  */
 
 import { api, ApiError } from './api.js';
 import { setAuthToken, setCurrentUser, redirectIfAuthenticated } from './auth.js';
 import { showAlert } from './utils.js';
 
-// Route guard: If user already has an active session, redirect to dashboard immediately
+// گارد صفحه: اگر کاربر قبلاً لاگین کرده باشد، مستقیماً به داشبورد هدایت می‌شود
 redirectIfAuthenticated();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const alertContainer = document.getElementById('alert-container');
 
   /**
-   * Updates the UI loading state during asynchronous authentication.
-   * Disabling the button prevents duplicate submissions (double clicks).
+   * تغییر وضعیت دکمه در زمان ارسال درخواست آسنکرون به سرور.
+   * غیرفعال شدن دکمه از ارسال درخواست‌های تکراری با کلیک چندباره جلوگیری می‌کند.
    * 
    * @param {boolean} isLoading
    */
@@ -31,16 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isLoading) {
       submitButton.disabled = true;
       if (loginSpinner) loginSpinner.classList.remove('hidden');
-      if (loginText) loginText.textContent = 'Logging in...';
+      if (loginText) loginText.textContent = 'در حال ورود...';
     } else {
       submitButton.disabled = false;
       if (loginSpinner) loginSpinner.classList.add('hidden');
-      if (loginText) loginText.textContent = 'Login';
+      if (loginText) loginText.textContent = 'ورود به سامانه';
     }
   }
 
   /**
-   * Validates email format using standard regex.
+   * بررسی صحت ساختار ایمیل با عبارات باقاعده (Regex).
    * 
    * @param {string} email
    * @returns {boolean}
@@ -57,21 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    // Client-side validation checks
+    // اعتبارسنجی فیلدها در سمت کلاینت
     if (!email) {
-      showAlert(alertContainer, 'Please enter your email address.', 'error');
+      showAlert(alertContainer, 'لطفاً آدرس ایمیل خود را وارد نمایید.', 'error');
       emailInput.focus();
       return;
     }
 
     if (!isValidEmail(email)) {
-      showAlert(alertContainer, 'Please enter a valid email address (e.g. student@student.com).', 'error');
+      showAlert(alertContainer, 'فرمت آدرس ایمیل نامعتبر است (مثال: student@student.com).', 'error');
       emailInput.focus();
       return;
     }
 
     if (!password) {
-      showAlert(alertContainer, 'Please enter your password.', 'error');
+      showAlert(alertContainer, 'لطفاً رمز عبور خود را وارد نمایید.', 'error');
       passwordInput.focus();
       return;
     }
@@ -79,42 +79,42 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       setLoading(true);
 
-      // Send login request to backend API
+      // ارسال درخواست ورود به بک‌اند
       const response = await api.post('/auth/login', {
         email,
         password
       });
 
-      // Verification: ensure token was received
+      // بررسی بازگشت توکن معتبر
       if (!response || !response.token) {
-        throw new ApiError('Authentication succeeded but no token was returned.');
+        throw new ApiError('ورود به سرور موفق بود ولی توکنی دریافت نشد.');
       }
 
       /**
-       * Crucial Step:
-       * Per assignment rules, the JWT is stored in document.cookie so that:
-       * 1. It persists across pages and refreshes
-       * 2. Client-side JavaScript can read it to attach 'Authorization: Bearer <token>'
+       * مرحله کلیدی:
+       * توکن در document.cookie ذخیره می‌شود تا:
+       * ۱. با رفرش صفحه از بین نرود.
+       * ۲. اسکریپت کلاینت بتواند آن را خوانده و در هدر Authorization ارسال کند.
        */
       setAuthToken(response.token);
 
-      // Cache user profile for immediate UI rendering on the dashboard
+      // کش کردن اطلاعات کاربر جهت نمایش بلافاصله در داشبورد
       if (response.user) {
         setCurrentUser(response.user);
       }
 
-      showAlert(alertContainer, 'Login successful! Redirecting...', 'success', 0);
+      showAlert(alertContainer, 'ورود با موفقیت انجام شد! در حال انتقال به داشبورد...', 'success', 0);
 
-      // Smooth redirection to dashboard
+      // انتقال آرام به داشبورد دانشجو
       setTimeout(() => {
         window.location.replace('dashboard.html');
       }, 500);
 
     } catch (error) {
-      console.error('[Login] Login attempt failed:', error);
+      console.error('[ورود] خطا در فرآیند ورود:', error);
       const message = error instanceof ApiError 
         ? error.message 
-        : 'Could not log in. Please verify your credentials and try again.';
+        : 'ورود به سامانه انجام نشد. لطفاً مشخصات خود را بررسی و دوباره تلاش کنید.';
       showAlert(alertContainer, message, 'error');
     } finally {
       setLoading(false);

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System - Login</title>
+    <title>ورود به سامانه - سامانه مدیریت کتابخانه</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,50 +11,54 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="login-icon">📚</div>
-                <h1>Library Portal</h1>
-                <p>Sign in with your student credentials to continue</p>
+                <h1>پرتال دانشجویی کتابخانه</h1>
+                <p>لطفاً با مشخصات ثبت‌شده خود در کاریار وارد شوید</p>
             </div>
             
             <div id="alert-container"></div>
             
             <form id="loginForm" novalidate>
                 <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
+                    <label for="email" class="form-label">آدرس ایمیل دانشجو</label>
                     <input 
                         type="email" 
                         id="email" 
                         class="form-input" 
-                        placeholder="e.g. student@student.com" 
+                        placeholder="مثال: student@student.com" 
                         autocomplete="email" 
+                        dir="ltr"
+                        style="text-align: left;"
                         required
                     >
                 </div>
                 
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">رمز عبور</label>
                     <input 
                         type="password" 
                         id="password" 
                         class="form-input" 
-                        placeholder="Enter your password" 
+                        placeholder="رمز عبور خود را وارد نمایید" 
                         autocomplete="current-password" 
+                        dir="ltr"
+                        style="text-align: left;"
                         required
                     >
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-                    <span id="loginText">Sign In</span>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.75rem;">
+                    <span id="loginText">ورود به سامانه</span>
                     <span id="loginSpinner" class="loading hidden"></span>
                 </button>
             </form>
 
-            <div style="text-align: center; margin-top: 1.75rem; font-size: 0.875rem; color: var(--text-muted);">
-                <a href="index.html" style="color: var(--text-muted); text-decoration: none;">&larr; Back to Home</a>
+            <div style="text-align: center; margin-top: 1.75rem; font-size: 0.9rem; color: var(--text-muted);">
+                <a href="index.html" style="color: var(--text-muted); text-decoration: none;">&larr; بازگشت به صفحه اصلی</a>
             </div>
         </div>
     </div>
 
-    <!-- Login Logic ES Module -->
+    <!-- اسکریپت صفحه ورود به صورت ES Module -->
     <script type="module" src="js/login.js"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 /**
- * Library Management System - My Loans Page Logic
+ * سامانه مدیریت کتابخانه - منطق صفحه امانت‌های من (My Loans Page Logic)
  * 
- * Manages user's personal loan records:
- * - Fetches loans from /api/loans/my-loans
- * - Calculates loan statistics (Total, Active, Returned)
- * - Implements book return action with confirmation, loading indicator, and cache invalidation
+ * وظایف این ماژول:
+ * - استعلام امانت‌های دانشجو از اندپوینت /api/loans/my-loans
+ * - محاسبه آمار امانت‌ها (کل، امانت‌های فعال، کتاب‌های تحویل‌شده)
+ * - عملیات بازگرداندن کتاب، اخذ تاییدیه، نشانگر لودینگ و باطل‌سازی خودکار کش
  */
 
 import { api } from './api.js';
@@ -12,7 +12,7 @@ import { requireAuth } from './auth.js';
 import { clearBooksCache } from './cache.js';
 import { setupHeaderUser, formatDate, escapeHtml, showAlert } from './utils.js';
 
-// Route guard: Redirect unauthenticated visitors back to login.html
+// گارد صفحه: جلوگیری از دسترسی کاربران غیرمجاز
 requireAuth();
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,12 +23,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const activeLoansEl = document.getElementById('activeLoans');
   const returnedLoansEl = document.getElementById('returnedLoans');
   const alertContainer = document.getElementById('loansAlert');
-  const tableCard = document.getElementById('tableCard');
 
   let myLoans = [];
 
   /**
-   * Loads the current user's loans from the backend.
+   * دریافت سوابق امانت‌های کاربر جاری از سرور.
    */
   async function loadLoans() {
     try {
@@ -40,21 +39,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderLoans(myLoans);
         updateStatistics(myLoans);
       } else {
-        throw new Error('Unexpected loan list response format.');
+        throw new Error('فرمت پاسخ فهرست امانت‌ها از سرور نامعتبر است.');
       }
     } catch (error) {
-      console.error('[Loans] Error fetching loans:', error);
+      console.error('[امانت‌ها] خطا در دریافت فهرست امانت‌ها:', error);
       showAlert(
         alertContainer,
-        'Could not load your loan history. Please try again later.',
+        'دریافت تاریخچه امانت‌های شما با خطا مواجه شد. لطفاً دوباره تلاش فرمایید.',
         'error',
         0
       );
       if (loansTableBody) {
         loansTableBody.innerHTML = `
           <tr>
-            <td colspan="5" style="text-align: center; padding: 2rem; color: #64748b;">
-              Failed to load loan records.
+            <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              دریافت اطلاعات سوابق امانت ناموفق بود.
             </td>
           </tr>
         `;
@@ -63,21 +62,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Displays placeholder skeleton rows while loan data is loading.
+   * نمایش ردیف‌های اسکلتون تا زمان دریافت پاسخ شبکه.
    */
   function showLoadingRows() {
     if (!loansTableBody) return;
     loansTableBody.innerHTML = Array.from({ length: 3 }).map(() => `
       <tr>
-        <td colspan="5" style="text-align: center; padding: 1.5rem; color: #94a3b8;">
-          <span class="loading" style="vertical-align: middle; margin-right: 0.5rem;"></span> Loading loans...
+        <td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-light);">
+          <span class="loading"></span> در حال بارگذاری سوابق امانت...
         </td>
       </tr>
     `).join('');
   }
 
   /**
-   * Calculates and updates loan metrics on the page.
+   * محاسبه و به‌روزرسانی کارت‌های آماری سوابق امانت.
    * 
    * @param {Array} loans
    */
@@ -86,18 +85,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const active = loans.filter(l => l.status === 'active' || l.status === 'overdue').length;
     const returned = loans.filter(l => l.status === 'returned').length;
 
-    if (totalLoansEl) totalLoansEl.textContent = total;
-    if (activeLoansEl) activeLoansEl.textContent = active;
-    if (returnedLoansEl) returnedLoansEl.textContent = returned;
+    if (totalLoansEl) totalLoansEl.textContent = total.toLocaleString('fa-IR');
+    if (activeLoansEl) activeLoansEl.textContent = active.toLocaleString('fa-IR');
+    if (returnedLoansEl) returnedLoansEl.textContent = returned.toLocaleString('fa-IR');
 
     const countHeaderEl = document.getElementById('loansCountHeader');
     if (countHeaderEl) {
-      countHeaderEl.textContent = `Total: ${total} loan${total === 1 ? '' : 's'}`;
+      countHeaderEl.textContent = `مجموع: ${total.toLocaleString('fa-IR')} مورد`;
     }
   }
 
   /**
-   * Renders the loans table rows.
+   * رندر ردیف‌های جدول سوابق امانت به همراه برچسب‌های وضعیت فارسی.
    * 
    * @param {Array} loans
    */
@@ -107,11 +106,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!loans || loans.length === 0) {
       loansTableBody.innerHTML = `
         <tr>
-          <td colspan="5" style="text-align: center; padding: 3rem 1rem;">
+          <td colspan="5" style="text-align: center; padding: 3.5rem 1rem;">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📚</div>
-            <h4 style="color: #1e293b; margin-bottom: 0.5rem;">No Loans Found</h4>
-            <p style="color: #64748b; margin-bottom: 1rem;">You have not borrowed any books yet.</p>
-            <a href="books.html" class="btn btn-primary btn-sm">Browse Books</a>
+            <h4 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.15rem;">هیچ سابقه امانتی ثبت نشده است</h4>
+            <p style="color: var(--text-muted); margin-bottom: 1.25rem;">شما در حال حاضر هیچ کتابی را به امانت نگرفته‌اید.</p>
+            <a href="books.html" class="btn btn-primary btn-sm">مشاهده کاتالوگ کتاب‌ها</a>
           </td>
         </tr>
       `;
@@ -124,28 +123,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       const isActive = status === 'active' || status === 'overdue';
 
       let statusBadgeClass = 'status-active';
-      let statusLabel = 'Active';
+      let statusLabel = 'امانت فعال';
 
       if (status === 'returned') {
         statusBadgeClass = 'status-returned';
-        statusLabel = 'Returned';
+        statusLabel = 'بازگردانده شده';
       } else if (status === 'overdue' || loan.isOverdue) {
         statusBadgeClass = 'status-overdue';
-        statusLabel = 'Overdue';
+        statusLabel = 'دارای دیرکرد';
       }
 
       return `
         <tr data-loan-id="${escapeHtml(loan.id)}">
           <td>
-            <strong style="color: #0f172a;">${escapeHtml(book.title || 'Untitled Book')}</strong>
+            <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHtml(book.title || 'کتاب بدون عنوان')}</strong>
             <br>
-            <small style="color: #64748b;">ISBN: ${escapeHtml(book.isbn || '—')}</small>
+            <small style="color: var(--text-muted);">شابک: ${escapeHtml(book.isbn || '—')}</small>
           </td>
-          <td style="color: #334155;">${escapeHtml(book.author || 'Unknown')}</td>
-          <td style="color: #334155;">
-            <div><strong>Borrowed:</strong> ${formatDate(loan.loanDate || loan.createdAt)}</div>
-            ${loan.dueDate ? `<div style="font-size: 0.85rem; color: #64748b;"><strong>Due:</strong> ${formatDate(loan.dueDate)}</div>` : ''}
-            ${loan.returnDate ? `<div style="font-size: 0.85rem; color: #059669;"><strong>Returned:</strong> ${formatDate(loan.returnDate)}</div>` : ''}
+          <td style="color: var(--text-main); font-weight: 500;">${escapeHtml(book.author || 'نامشخص')}</td>
+          <td style="color: #334155; font-size: 0.9rem;">
+            <div><span>تاریخ دریافت:</span> <strong>${formatDate(loan.loanDate || loan.createdAt)}</strong></div>
+            ${loan.dueDate ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;"><span>مهلت تحویل:</span> ${formatDate(loan.dueDate)}</div>` : ''}
+            ${loan.returnDate ? `<div style="font-size: 0.85rem; color: #059669; margin-top: 0.2rem;"><span>تاریخ تحویل:</span> ${formatDate(loan.returnDate)}</div>` : ''}
           </td>
           <td>
             <span class="status ${statusBadgeClass}">${escapeHtml(statusLabel)}</span>
@@ -153,22 +152,22 @@ document.addEventListener('DOMContentLoaded', async () => {
           <td>
             ${isActive ? `
               <button class="btn btn-success btn-sm return-btn" data-id="${escapeHtml(loan.id)}">
-                Return Book
+                بازگرداندن کتاب
               </button>
             ` : `
-              <span class="badge badge-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; background: #e2e8f0; color: #475569; border-radius: 4px;">Completed</span>
+              <span class="badge badge-secondary" style="font-size: 0.82rem; padding: 0.4rem 0.8rem; background: #e2e8f0; color: #475569; border-radius: 4px;">تحویل شد</span>
             `}
           </td>
         </tr>
       `;
     }).join('');
 
-    // Bind return actions
+    // اتصال رویدادهای بازگرداندن کتاب
     attachReturnListeners();
   }
 
   /**
-   * Binds click events to all "Return Book" buttons.
+   * اتصال کلیک به تمام دکمه‌های «بازگرداندن کتاب».
    */
   function attachReturnListeners() {
     const returnButtons = loansTableBody.querySelectorAll('.return-btn');
@@ -181,57 +180,56 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Handles book return request.
+   * ارسال درخواست بازگرداندن کتاب به سرور.
    * 
    * @param {string} loanId
    * @param {HTMLButtonElement} buttonEl
    */
   async function handleReturnBook(loanId, buttonEl) {
-    if (!confirm('Are you sure you want to return this book?')) {
+    if (!confirm('آیا از بازگرداندن این کتاب اطمینان دارید؟')) {
       return;
     }
 
     const originalText = buttonEl.textContent;
     buttonEl.disabled = true;
-    buttonEl.textContent = 'Returning...';
+    buttonEl.textContent = 'در حال ثبت...';
 
     try {
-      // Call POST /api/loans/:id/return
+      // ارسال درخواست به POST /api/loans/:id/return
       const response = await api.post(`/loans/${loanId}/return`, {
-        notes: 'Book returned via student portal'
+        notes: 'تحویل داده شده از طریق پنل دانشجویی'
       });
 
       showAlert(
         alertContainer,
-        response?.message || 'Book returned successfully! Thank you.',
+        response?.message || 'کتاب با موفقیت بازگردانده شد. با تشکر از امانت‌داری شما!',
         'success',
         5000
       );
 
       /**
-       * CRITICAL CACHE INVALIDATION:
-       * Now that a copy has been returned, the library inventory count has increased on the server.
-       * Clearing the books cache guarantees that when the user next visits books.html,
-       * fresh copy availability is loaded from the backend API.
+       * باطل‌سازی کش در زمان پس دادن کتاب:
+       * با تحویل کتاب، یک نسخه به موجودی کتابخانه در سرور افزوده می‌شود.
+       * با فراخوانی clearBooksCache() تضمین می‌کنیم که کاربر در صفحه کتاب‌ها، موجودی جدید را خواهد دید.
        */
       clearBooksCache();
 
-      // Update in-memory state
+      // تغییر وضعیت در حافظه کلاینت
       const targetLoan = myLoans.find(l => l.id === loanId);
       if (targetLoan) {
         targetLoan.status = 'returned';
         targetLoan.returnDate = new Date().toISOString();
       }
 
-      // Re-render loans and recalculate stats
+      // رندر مجدد جدول و ارقام آماری
       renderLoans(myLoans);
       updateStatistics(myLoans);
 
     } catch (error) {
-      console.error('[Loans] Failed to return book:', error);
+      console.error('[امانت‌ها] خطا در بازگرداندن کتاب:', error);
       showAlert(
         alertContainer,
-        error.message || 'Could not return book. Please try again.',
+        error.message || 'عملیات بازگرداندن کتاب انجام نشد. لطفاً مجدداً تلاش کنید.',
         'error'
       );
       buttonEl.disabled = false;

@@ -1,20 +1,20 @@
 /**
- * Library Management System - API Client Module
+ * سامانه مدیریت کتابخانه - ماژول کلاینت API
  * 
- * Centralized fetch abstraction that handles:
- * - Prepending the verified base URL
- * - Reading the JWT token from the cookie and appending the Authorization: Bearer <token> header
- * - Automatic Content-Type headers for JSON bodies
- * - Normalized JSON response parsing
- * - Comprehensive HTTP status code inspection and user-friendly error translation
- * - Detecting 401 Unauthorized sessions and executing graceful cleanup
+ * این ماژول ارتباط متمرکز با سرور را مدیریت می‌کند:
+ * - اضافه کردن خودکار آدرس سرور
+ * - خواندن توکن از کوکی و تزریق خودکار هدر Authorization: Bearer <token>
+ * - اضافه کردن هدر Content-Type برای ارسال JSON
+ * - پردازش پاسخ‌های JSON
+ * - تبدیل کدهای خطای HTTP به پیام‌های خطای فارسی و کاربرپسند
+ * - تشخیص انقضای نشست (401) و خروج خودکار
  */
 
 import { API_BASE_URL } from './config.js';
 import { getAuthToken, logout } from './auth.js';
 
 /**
- * Custom API Error class providing friendly user messages alongside technical HTTP details.
+ * کلاس اختصاصی خطاهای API که پیام فارسی و کد وضعیت HTTP را نگهداری می‌کند.
  */
 export class ApiError extends Error {
   constructor(message, status = 0, details = null) {
@@ -26,69 +26,82 @@ export class ApiError extends Error {
 }
 
 /**
- * Converts HTTP status codes and server error payloads into clear, human-readable messages.
+ * تبدیل کدهای وضعیت HTTP و پاسخ‌های سرور به پیام‌های روان و فارسی.
  * 
- * @param {number} status - HTTP status code
- * @param {object|null} responseData - Parsed JSON body returned by the API
- * @returns {string} User-friendly error message
+ * @param {number} status - کد وضعیت HTTP
+ * @param {object|null} responseData - داده‌های خطای دریافتی از سرور
+ * @returns {string} پیام خطای قابل فهم برای کاربر
  */
 function parseErrorMessage(status, responseData) {
-  // If the backend returned a specific error message, inspect it
+  // اگر سرور پیام مشخصی در فیلدهای message یا error ارسال کرده باشد:
   if (responseData && typeof responseData === 'object') {
-    if (responseData.message) return responseData.message;
+    if (responseData.message) {
+      // ترجمه پیام‌های رایج بک‌اند به فارسی روان
+      const msg = responseData.message;
+      if (msg.includes('Account is inactive or does not exist')) {
+        return 'حساب کاربری با این ایمیل یافت نشد یا غیرفعال است.';
+      }
+      if (msg.includes('Invalid email or password')) {
+        return 'ایمیل یا رمز عبور وارد شده نادرست است.';
+      }
+      if (msg.includes('already have this book on loan')) {
+        return 'شما در حال حاضر این کتاب را در امانت خود دارید.';
+      }
+      if (msg.includes('not available for loan')) {
+        return 'این کتاب در حال حاضر نسخه موجودی برای امانت ندارد.';
+      }
+      return msg;
+    }
     if (responseData.error) return responseData.error;
     if (Array.isArray(responseData.details) && responseData.details.length > 0) {
-      return responseData.details.map(d => d.message || d.field).join(', ');
+      return responseData.details.map(d => d.message || d.field).join('، ');
     }
   }
 
-  // Fallback messages based on HTTP status codes
+  // پیام‌های پیش‌فرض بر اساس کد وضعیت HTTP
   switch (status) {
     case 400:
-      return 'The request was invalid. Please check your input data.';
+      return 'اطلاعات ارسالی نامعتبر است. لطفاً ورودی‌ها را بررسی کنید.';
     case 401:
-      return 'Your session has expired or you are not authorized. Please log in again.';
+      return 'نشست کاربری شما منقضی شده است. لطفاً مجدداً وارد شوید.';
     case 403:
-      return 'You do not have permission to perform this action.';
+      return 'شما دسترسی لازم برای انجام این عملیات را ندارید.';
     case 404:
-      return 'The requested resource was not found.';
+      return 'مورد درخواستی در سامانه پیدا نشد.';
     case 409:
-      return 'Conflict: You already have this book on loan or the state has changed.';
+      return 'تداخل: این کتاب قبلاً به امانت گرفته شده است.';
     case 429:
-      return 'Too many requests. Please wait a moment before trying again.';
+      return 'تعداد درخواست‌ها بیش از حد مجاز است. لطفاً لحظاتی دیگر تلاش کنید.';
     case 500:
     case 502:
     case 503:
-      return 'The server encountered an error. Please try again later.';
+      return 'خطایی در سرور رخ داده است. لطفاً کمی بعد تلاش کنید.';
     default:
-      return 'An unexpected error occurred. Please check your connection and try again.';
+      return 'خطای غیرمنتظره‌ای رخ داد. لطفاً اتصال اینترنت خود را بررسی کرده و مجدداً تلاش کنید.';
   }
 }
 
 /**
- * Core fetch wrapper with auth header injection and error handling.
+ * تابع مرکزی ارسال درخواست به سرور همراه با هدر احراز هویت.
  * 
- * @param {string} endpoint - API path (e.g. "/books" or "/loans/my-loans")
- * @param {object} options - Fetch options (method, headers, body, etc.)
- * @returns {Promise<any>} Parsed response data
+ * @param {string} endpoint - مسیر اندپوینت (مثلاً /books یا /loans/my-loans)
+ * @param {object} options - تنظیمات درخواست
+ * @returns {Promise<any>}
  */
 async function request(endpoint, options = {}) {
-  // Ensure endpoint starts with a slash
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const url = `${API_BASE_URL}${cleanEndpoint}`;
 
-  // Build headers
   const headers = {
     'Accept': 'application/json',
     ...options.headers
   };
 
-  // If sending body and Content-Type not specified, default to JSON
   if (options.body && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
 
-  // Automatically attach Authorization header from cookie if token exists
+  // خواندن توکن از کوکی و اضافه کردن به هدر در صورت لاگین بودن
   const token = getAuthToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -101,36 +114,33 @@ async function request(endpoint, options = {}) {
       headers
     });
   } catch (networkError) {
-    console.error('[API] Network connection failure:', networkError);
+    console.error('[API] خطای اتصال به شبکه:', networkError);
     throw new ApiError(
-      'Unable to connect to the library server. Please check your internet connection.',
+      'امکان برقراری ارتباط با سرور کتابخانه وجود ندارد. لطفاً اینترنت خود را بررسی کنید.',
       0,
       networkError
     );
   }
 
-  // Attempt to parse JSON response
   let data = null;
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     try {
       data = await response.json();
     } catch (parseError) {
-      console.warn('[API] Could not parse JSON response:', parseError);
+      console.warn('[API] خطا در پارس کردن پاسخ JSON:', parseError);
     }
   }
 
-  // Check HTTP response status
   if (!response.ok) {
-    // If token is invalid or expired (401) on a protected route, trigger logout
+    // در صورت دریافت خطای 401 در صفحات داخلی، کاربر خارج می‌شود
     if (response.status === 401 && !endpoint.includes('/auth/login')) {
-      console.warn('[API] Received 401 Unauthorized - Session expired.');
-      // Give a tiny grace time for user to see notice if needed, or redirect
+      console.warn('[API] دریافت خطای 401 - توکن منقضی شده است.');
       setTimeout(() => logout(), 500);
     }
 
     const message = parseErrorMessage(response.status, data);
-    console.error(`[API] Request failed [${response.status} ${cleanEndpoint}]:`, message, data);
+    console.error(`[API] درخواست ناموفق [${response.status} ${cleanEndpoint}]:`, message, data);
     throw new ApiError(message, response.status, data);
   }
 
@@ -138,12 +148,9 @@ async function request(endpoint, options = {}) {
 }
 
 /**
- * High-level API client object
+ * آبجکت دسترسی سریع به متدهای HTTP
  */
 export const api = {
-  /**
-   * Performs an HTTP GET request.
-   */
   get(endpoint, options = {}) {
     return request(endpoint, {
       ...options,
@@ -151,9 +158,6 @@ export const api = {
     });
   },
 
-  /**
-   * Performs an HTTP POST request.
-   */
   post(endpoint, body = null, options = {}) {
     return request(endpoint, {
       ...options,

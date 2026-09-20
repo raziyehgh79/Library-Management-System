@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Library Management System</title>
+    <title>داشبورد دانشجو - سامانه مدیریت کتابخانه</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,23 +12,23 @@
             <div class="header-content">
                 <a href="dashboard.html" class="logo">
                     <span class="logo-icon">📚</span>
-                    <span>Library Management</span>
+                    <span>مدیریت کتابخانه کاریار</span>
                 </a>
 
-                <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <button class="menu-toggle" id="menuToggle" aria-label="تغییر وضعیت منو" aria-expanded="false">
                     &#9776;
                 </button>
 
                 <nav class="nav" id="primaryNav">
-                    <a href="dashboard.html" class="active">Dashboard</a>
-                    <a href="books.html">Browse Books</a>
-                    <a href="my-loans.html">My Loans</a>
-                    <a href="#" id="logoutBtn" style="color: var(--danger);">Logout</a>
+                    <a href="dashboard.html" class="active">داشبورد</a>
+                    <a href="books.html">مرور کتاب‌ها</a>
+                    <a href="my-loans.html">امانت‌های من</a>
+                    <a href="#" id="logoutBtn" style="color: var(--danger);">خروج از حساب</a>
                 </nav>
 
                 <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">S</div>
-                    <span class="user-name" id="userName">Student</span>
+                    <div class="user-avatar" id="userAvatar">د</div>
+                    <span class="user-name" id="userName">دانشجو</span>
                 </div>
             </div>
         </div>
@@ -37,52 +37,52 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1 class="page-title">Welcome back, <span id="studentName">Student</span>!</h1>
-                <p class="page-subtitle">Manage your student library account, review statistics, and explore book availability.</p>
+                <h1 class="page-title">خوش آمدید، <span id="studentName">دانشجو</span>!</h1>
+                <p class="page-subtitle">مدیریت حساب کاربری، مشاهده آمار زنده امانت‌ها و دسترسی سریع به کاتالوگ کتابخانه.</p>
             </div>
 
             <div id="dashboardAlert"></div>
             
-            <!-- Statistics Cards -->
+            <!-- کارت‌های آمار زنده داشبورد -->
             <div class="grid grid-2" id="statsContainer" style="margin-bottom: 2rem;">
                 <div class="card stat-card">
                     <div class="stat-number" id="activeLoans">—</div>
-                    <div class="stat-label">Active Loans</div>
+                    <div class="stat-label">تعداد امانت‌های فعال شما</div>
                 </div>
                 <div class="card stat-card stat-success">
                     <div class="stat-number" id="availableBooks">—</div>
-                    <div class="stat-label">Available Books in Library</div>
+                    <div class="stat-label">تعداد کل کتاب‌های موجود در کتابخانه</div>
                 </div>
             </div>
 
-            <!-- Student Profile Information -->
+            <!-- مشخصات فردی دانشجو -->
             <div class="card" style="margin-bottom: 2rem;">
                 <div class="card-header">
-                    <h2 class="card-title">Student Profile & Membership</h2>
+                    <h2 class="card-title">مشخصات عضویت و پروفایل دانشجو</h2>
                 </div>
                 <div id="profileCard">
                     <div style="color: var(--text-muted); font-size: 0.95rem;">
-                        Loading profile information...
+                        در حال بارگذاری مشخصات...
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
+            <!-- دکمه‌های دسترسی سریع -->
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Quick Actions</h2>
+                    <h2 class="card-title">دسترسی سریع</h2>
                 </div>
                 <div class="grid grid-2">
-                    <a href="books.html" class="btn btn-primary" style="padding: 1.5rem; text-align: left; justify-content: flex-start;">
+                    <a href="books.html" class="btn btn-primary" style="padding: 1.5rem; text-align: right; justify-content: flex-start;">
                         <div>
-                            <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem;">📖 Browse Books</h3>
-                            <p style="font-size: 0.875rem; opacity: 0.9; font-weight: 400;">Explore our collection and borrow your next read</p>
+                            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">📖 مرور و امانت کتاب‌ها</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9; font-weight: 400;">کاتالوگ بیش از ۵۰ عنوان کتاب را ببینید و کتاب مورد نظر را امانت بگیرید</p>
                         </div>
                     </a>
-                    <a href="my-loans.html" class="btn btn-success" style="padding: 1.5rem; text-align: left; justify-content: flex-start;">
+                    <a href="my-loans.html" class="btn btn-success" style="padding: 1.5rem; text-align: right; justify-content: flex-start;">
                         <div>
-                            <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem;">📋 My Loans</h3>
-                            <p style="font-size: 0.875rem; opacity: 0.9; font-weight: 400;">View borrowed books, return titles, and check due dates</p>
+                            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">📋 امانت‌های من</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9; font-weight: 400;">مشاهده مهلت تحویل کتاب‌ها، تاریخچه سوابق و بازگرداندن کتاب‌ها</p>
                         </div>
                     </a>
                 </div>
@@ -92,11 +92,11 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project</p>
+            <p>&copy; ۱۴۰۵ سامانه مدیریت کتابخانه &middot; پروژه نهایی جاوااسکریپت</p>
         </div>
     </footer>
 
-    <!-- Dashboard Logic ES Module -->
+    <!-- اسکریپت داشبورد دانشجو -->
     <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
