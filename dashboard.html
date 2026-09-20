@@ -3,23 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Library Management System</title>
+    <title>Dashboard - Library Management System</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">📚 Library Management</div>
-                <nav class="nav">
+                <a href="dashboard.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>Library Management</span>
+                </a>
+
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    &#9776;
+                </button>
+
+                <nav class="nav" id="primaryNav">
                     <a href="dashboard.html" class="active">Dashboard</a>
                     <a href="books.html">Browse Books</a>
                     <a href="my-loans.html">My Loans</a>
-                    <a href="login.html">Logout</a>
+                    <a href="#" id="logoutBtn" style="color: var(--danger);">Logout</a>
                 </nav>
+
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar">S</div>
-                    <span id="userName">Student Name</span>
+                    <span class="user-name" id="userName">Student</span>
                 </div>
             </div>
         </div>
@@ -27,21 +36,36 @@
 
     <main class="main-content">
         <div class="container">
-            <h1>Welcome back, <span id="studentName">Student Name</span>!</h1>
-            <p style="color: #666; margin-bottom: 2rem;">Manage your library account and explore our collection.</p>
+            <div class="page-header">
+                <h1 class="page-title">Welcome back, <span id="studentName">Student</span>!</h1>
+                <p class="page-subtitle">Manage your student library account, review statistics, and explore book availability.</p>
+            </div>
+
+            <div id="dashboardAlert"></div>
             
             <!-- Statistics Cards -->
-            <div class="grid grid-2">
+            <div class="grid grid-2" id="statsContainer" style="margin-bottom: 2rem;">
                 <div class="card stat-card">
-                    <div class="stat-number" id="activeLoans">0</div>
+                    <div class="stat-number" id="activeLoans">—</div>
                     <div class="stat-label">Active Loans</div>
                 </div>
-                <div class="card stat-card">
-                    <div class="stat-number" id="availableBooks">0</div>
-                    <div class="stat-label">Available Books</div>
+                <div class="card stat-card stat-success">
+                    <div class="stat-number" id="availableBooks">—</div>
+                    <div class="stat-label">Available Books in Library</div>
                 </div>
             </div>
 
+            <!-- Student Profile Information -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Student Profile & Membership</h2>
+                </div>
+                <div id="profileCard">
+                    <div style="color: var(--text-muted); font-size: 0.95rem;">
+                        Loading profile information...
+                    </div>
+                </div>
+            </div>
 
             <!-- Quick Actions -->
             <div class="card">
@@ -49,18 +73,30 @@
                     <h2 class="card-title">Quick Actions</h2>
                 </div>
                 <div class="grid grid-2">
-                    <a href="books.html" class="btn btn-primary" style="text-align: center; padding: 2rem;">
-                        <h3>📖 Browse Books</h3>
-                        <p>Explore our collection and find your next read</p>
+                    <a href="books.html" class="btn btn-primary" style="padding: 1.5rem; text-align: left; justify-content: flex-start;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem;">📖 Browse Books</h3>
+                            <p style="font-size: 0.875rem; opacity: 0.9; font-weight: 400;">Explore our collection and borrow your next read</p>
+                        </div>
                     </a>
-                    <a href="my-loans.html" class="btn btn-success" style="text-align: center; padding: 2rem;">
-                        <h3>📋 My Loans</h3>
-                        <p>View and manage your current loans</p>
+                    <a href="my-loans.html" class="btn btn-success" style="padding: 1.5rem; text-align: left; justify-content: flex-start;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem;">📋 My Loans</h3>
+                            <p style="font-size: 0.875rem; opacity: 0.9; font-weight: 400;">View borrowed books, return titles, and check due dates</p>
+                        </div>
                     </a>
                 </div>
             </div>
         </div>
     </main>
 
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project</p>
+        </div>
+    </footer>
+
+    <!-- Dashboard Logic ES Module -->
+    <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
