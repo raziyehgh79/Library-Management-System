@@ -1,0 +1,11 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Temporary / Scratch files
+template-repo/
+node_modules/
+*.log
