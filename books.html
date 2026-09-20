@@ -10,16 +10,25 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">📚 Library Management</div>
-                <nav class="nav">
+                <a href="dashboard.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>Library Management</span>
+                </a>
+
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    &#9776;
+                </button>
+
+                <nav class="nav" id="primaryNav">
                     <a href="dashboard.html">Dashboard</a>
                     <a href="books.html" class="active">Browse Books</a>
                     <a href="my-loans.html">My Loans</a>
-                    <a href="login.html">Logout</a>
+                    <a href="#" id="logoutBtn" style="color: var(--danger);">Logout</a>
                 </nav>
+
                 <div class="user-info">
-                    <div class="user-avatar">S</div>
-                    <span>Student Name</span>
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <span class="user-name" id="userName">Student</span>
                 </div>
             </div>
         </div>
@@ -27,116 +36,62 @@
 
     <main class="main-content">
         <div class="container">
-            <h1>Browse Books</h1>
-            <p style="color: #666; margin-bottom: 2rem;">Explore our collection and find your next read.</p>
+            <div class="page-header">
+                <h1 class="page-title">Browse Books</h1>
+                <p class="page-subtitle">Explore the collection, filter by genre, and borrow titles directly to your account.</p>
+            </div>
             
+            <div id="booksAlert"></div>
 
-            <!-- Books Grid -->
-            <div class="grid grid-3">
-                <!-- Book Card 1 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">JavaScript: The Good Parts</h3>
-                        <span class="status status-available">Available</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> Douglas Crockford</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9780596517748</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Programming</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 5</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">A comprehensive guide to JavaScript programming with best practices and common pitfalls.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary btn-sm">Borrow Book</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
+            <!-- Search and Filter Controls -->
+            <div class="filter-bar">
+                <div class="search-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="form-input" 
+                        placeholder="🔍 Search books by title, author, or ISBN..." 
+                        aria-label="Search books"
+                    >
                 </div>
-
-                <!-- Book Card 2 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">Clean Code</h3>
-                        <span class="status status-available">Available</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> Robert C. Martin</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9780132350884</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Programming</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 3</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">A handbook of agile software craftsmanship with practical advice for writing clean code.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary btn-sm">Borrow Book</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
+                <div class="filter-select-wrapper">
+                    <select id="categoryFilter" class="form-select" aria-label="Filter by category">
+                        <option value="">All Categories</option>
+                    </select>
                 </div>
-
-                <!-- Book Card 3 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">The Great Gatsby</h3>
-                        <span class="status status-unavailable">Unavailable</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> F. Scott Fitzgerald</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9780743273565</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Fiction</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 0</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-secondary btn-sm" disabled>Not Available</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
-                </div>
-
-                <!-- Book Card 4 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">Atomic Habits</h3>
-                        <span class="status status-available">Available</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> James Clear</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9780735211292</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Self-Help</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 4</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">An easy and proven way to build good habits and break bad ones with practical strategies.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary btn-sm">Borrow Book</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
-                </div>
-
-                <!-- Book Card 5 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">Deep Work</h3>
-                        <span class="status status-available">Available</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> Cal Newport</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9781455586691</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Productivity</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 3</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">Rules for focused success in a distracted world with practical advice for deep work.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary btn-sm">Borrow Book</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
-                </div>
-
-                <!-- Book Card 6 -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #2c3e50;">Good to Great</h3>
-                        <span class="status status-available">Available</span>
-                    </div>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Author:</strong> Jim Collins</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>ISBN:</strong> 9780066620992</p>
-                    <p style="color: #666; margin-bottom: 0.5rem;"><strong>Category:</strong> Business</p>
-                    <p style="color: #666; margin-bottom: 1rem;"><strong>Available Copies:</strong> 2</p>
-                    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">Why some companies make the leap and others don't, with insights from extensive research.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary btn-sm">Borrow Book</button>
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                    </div>
+                <div class="filter-select-wrapper">
+                    <select id="availabilityFilter" class="form-select" aria-label="Filter by availability">
+                        <option value="all">All Availability</option>
+                        <option value="available">Available Only</option>
+                        <option value="unavailable">Unavailable Only</option>
+                    </select>
                 </div>
             </div>
 
+            <!-- Dynamic Books Grid Container -->
+            <div class="grid grid-3" id="booksGrid">
+                <!-- Book cards or skeleton loaders will be injected dynamically by books.js -->
+            </div>
         </div>
     </main>
+
+    <!-- Book Details Modal -->
+    <div class="modal" id="bookModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="modalClose" aria-label="Close modal">&times;</button>
+            <div id="modalBody">
+                <!-- Injected dynamically by books.js -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project</p>
+        </div>
+    </footer>
+
+    <!-- Books Logic ES Module -->
+    <script type="module" src="js/books.js"></script>
 </body>
 </html>
