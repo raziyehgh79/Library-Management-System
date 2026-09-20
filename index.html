@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
+    <title>Library Management System - Welcome</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">📚 Library Management System</div>
-                <nav class="nav">
-                    <a href="login.html">Login</a>
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span>Library Management</span>
+                </a>
+                <nav class="nav" id="publicNav">
+                    <a href="index.html" class="active">Home</a>
+                    <a href="login.html" id="navAuthLink">Login</a>
                 </nav>
             </div>
         </div>
@@ -20,50 +24,78 @@
 
     <main class="main-content">
         <div class="container">
-            <div style="text-align: center; padding: 4rem 0;">
-                <h1 style="font-size: 3rem; color: #2c3e50; margin-bottom: 1rem;">Welcome to Library Management System</h1>
-                <p style="font-size: 1.2rem; color: #666; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-                    A comprehensive library management solution for students and administrators. 
-                    Browse books, manage loans, and track your reading history.
+            <section style="text-align: center; padding: 4rem 1rem 3rem;">
+                <span class="category-badge" style="background-color: var(--primary-light); color: var(--primary); margin-bottom: 1.5rem; display: inline-block;">
+                    Academic Portal &middot; Course 15
+                </span>
+                <h1 style="font-size: 2.75rem; color: var(--primary); margin-bottom: 1rem; line-height: 1.2; letter-spacing: -0.03em;">
+                    Smart Library Management System
+                </h1>
+                <p style="font-size: 1.15rem; color: var(--text-muted); margin: 0 auto 2.5rem; max-width: 640px; line-height: 1.6;">
+                    An academic portal designed for students to seamlessly discover titles, manage personal loans, and monitor book availability in real time.
                 </p>
                 
-                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem;">
-                    <a href="login.html" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                        Get Started
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem;">
+                    <a href="login.html" id="heroCta" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1.05rem;">
+                        Student Login &rarr;
                     </a>
-                    <a href="dashboard.html" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                        View Demo
+                    <a href="books.html" class="btn btn-outline" style="padding: 0.85rem 1.8rem; font-size: 1.05rem;">
+                        Browse Collection
                     </a>
                 </div>
 
                 <!-- Features Grid -->
-                <div class="grid grid-3" style="margin-top: 4rem;">
-                    <div class="card" style="text-align: center; padding: 2rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
-                        <h3 style="color: #2c3e50; margin-bottom: 1rem;">Browse Books</h3>
-                        <p style="color: #666;">Explore our extensive collection of books across various categories and genres.</p>
+                <div class="grid grid-3" style="margin-top: 2rem; text-align: left;">
+                    <div class="card" style="padding: 2rem;">
+                        <div style="font-size: 2.25rem; margin-bottom: 1rem;">📖</div>
+                        <h3 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.2rem;">Extensive Catalog</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">
+                            Instant search across titles, authors, and ISBNs with a 5-minute intelligent client-side cache.
+                        </p>
                     </div>
                     
-                    <div class="card" style="text-align: center; padding: 2rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                        <h3 style="color: #2c3e50; margin-bottom: 1rem;">Manage Loans</h3>
-                        <p style="color: #666;">Borrow and return books with ease. Track your reading history and due dates.</p>
+                    <div class="card" style="padding: 2rem;">
+                        <div style="font-size: 2.25rem; margin-bottom: 1rem;">📋</div>
+                        <h3 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.2rem;">Live Loan Tracking</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">
+                            Track active borrowed books, calculate due dates, and return books with automated inventory updates.
+                        </p>
                     </div>
                     
-                    <div class="card" style="text-align: center; padding: 2rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
-                        <h3 style="color: #2c3e50; margin-bottom: 1rem;">User Management</h3>
-                        <p style="color: #666;">Comprehensive user management system for students and administrators.</p>
+                    <div class="card" style="padding: 2rem;">
+                        <div style="font-size: 2.25rem; margin-bottom: 1rem;">🔒</div>
+                        <h3 style="color: var(--text-main); margin-bottom: 0.5rem; font-size: 1.2rem;">Secure Authentication</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">
+                            JWT session verification stored via document.cookie with SameSite protection and bearer-token authorization.
+                        </p>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </main>
 
-    <footer style="background: #2c3e50; color: white; text-align: center; padding: 2rem 0; margin-top: 4rem;">
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Library Management System. Built for JavaScript Students.</p>
+            <p>&copy; 2026 Library Management System &middot; Final JavaScript Project &middot; Karyar Course 15</p>
         </div>
     </footer>
+
+    <script type="module">
+        import { isAuthenticated } from './js/auth.js';
+        
+        // Dynamic navigation update depending on auth state
+        if (isAuthenticated()) {
+            const navAuthLink = document.getElementById('navAuthLink');
+            const heroCta = document.getElementById('heroCta');
+            if (navAuthLink) {
+                navAuthLink.textContent = 'Dashboard';
+                navAuthLink.href = 'dashboard.html';
+            }
+            if (heroCta) {
+                heroCta.textContent = 'Go to Dashboard →';
+                heroCta.href = 'dashboard.html';
+            }
+        }
+    </script>
 </body>
 </html>
