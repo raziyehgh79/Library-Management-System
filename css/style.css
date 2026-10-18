@@ -829,31 +829,50 @@ body {
 
 @media (max-width: 768px) {
   .menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 0.35rem;
+    border-radius: var(--radius-sm);
+    z-index: 101;
   }
 
   .nav {
-    display: none;
+    display: none !important;
     position: absolute;
     top: 100%;
     right: 0;
-    left: auto;
+    left: 0;
     width: 100%;
-    background: white;
+    background: #ffffff;
     flex-direction: column;
     padding: 1rem 1.5rem;
-    box-shadow: var(--shadow-md);
-    border-bottom: 1px solid var(--border);
+    box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.15);
+    border-bottom: 2px solid var(--primary);
+    border-radius: 0 0 var(--radius) var(--radius);
     gap: 0.5rem;
+    z-index: 1000;
   }
 
   .nav.nav-open {
-    display: flex;
+    display: flex !important;
   }
 
   .nav a {
     width: 100%;
     padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+
+  .nav a:hover, .nav a.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
   }
 
   .header-content {

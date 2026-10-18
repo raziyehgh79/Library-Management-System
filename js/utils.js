@@ -66,7 +66,8 @@ export function setupHeaderUser() {
     }
   }
 
-  if (logoutBtn) {
+  if (logoutBtn && logoutBtn.dataset.hasLogoutListener !== 'true') {
+    logoutBtn.dataset.hasLogoutListener = 'true';
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
       if (confirm('آیا مطمئن هستید که می‌خواهید از سیستم خارج شوید؟')) {
@@ -78,14 +79,35 @@ export function setupHeaderUser() {
   setupMobileNav();
 }
 
-function setupMobileNav() {
+export function setupMobileNav() {
   const menuToggle = document.getElementById('menuToggle');
-  const nav = document.getElementById('primaryNav');
+  const nav = document.getElementById('primaryNav') || document.getElementById('publicNav') || document.querySelector('.nav');
 
   if (menuToggle && nav) {
-    menuToggle.addEventListener('click', () => {
+    if (menuToggle.dataset.hasMobileListener === 'true') {
+      return;
+    }
+    menuToggle.dataset.hasMobileListener = 'true';
+
+    menuToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const isOpen = nav.classList.toggle('nav-open');
-      menuToggle.setAttribute('aria-expanded', isOpen);
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('nav-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
+        nav.classList.remove('nav-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 }

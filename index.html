@@ -14,6 +14,9 @@
                     <span class="logo-icon">📚</span>
                     <span>مدیریت کتابخانه کاریار</span>
                 </a>
+                <button class="menu-toggle" id="menuToggle" type="button" aria-label="تغییر وضعیت منو" aria-expanded="false">
+                    &#9776;
+                </button>
                 <nav class="nav" id="publicNav">
                     <a href="index.html" class="active">صفحه اصلی</a>
                     <a href="login.html" id="navAuthLink">ورود به سامانه</a>
@@ -81,8 +84,10 @@
 
     <script type="module">
         import { isAuthenticated } from './js/auth.js';
+        import { setupMobileNav } from './js/utils.js';
         
-        // به‌روزرسانی پویای منو بر اساس وضعیت ورود
+        setupMobileNav();
+
         if (isAuthenticated()) {
             const navAuthLink = document.getElementById('navAuthLink');
             const heroCta = document.getElementById('heroCta');
