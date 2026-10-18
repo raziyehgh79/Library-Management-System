@@ -1,21 +1,6 @@
-/**
- * سامانه مدیریت کتابخانه - ماژول کلاینت API
- * 
- * این ماژول ارتباط متمرکز با سرور را مدیریت می‌کند:
- * - اضافه کردن خودکار آدرس سرور
- * - خواندن توکن از کوکی و تزریق خودکار هدر Authorization: Bearer <token>
- * - اضافه کردن هدر Content-Type برای ارسال JSON
- * - پردازش پاسخ‌های JSON
- * - تبدیل کدهای خطای HTTP به پیام‌های خطای فارسی و کاربرپسند
- * - تشخیص انقضای نشست (401) و خروج خودکار
- */
-
 import { API_BASE_URL } from './config.js';
 import { getAuthToken, logout } from './auth.js';
 
-/**
- * کلاس اختصاصی خطاهای API که پیام فارسی و کد وضعیت HTTP را نگهداری می‌کند.
- */
 export class ApiError extends Error {
   constructor(message, status = 0, details = null) {
     super(message);
@@ -25,18 +10,9 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * تبدیل کدهای وضعیت HTTP و پاسخ‌های سرور به پیام‌های روان و فارسی.
- * 
- * @param {number} status - کد وضعیت HTTP
- * @param {object|null} responseData - داده‌های خطای دریافتی از سرور
- * @returns {string} پیام خطای قابل فهم برای کاربر
- */
 function parseErrorMessage(status, responseData) {
-  // اگر سرور پیام مشخصی در فیلدهای message یا error ارسال کرده باشد:
   if (responseData && typeof responseData === 'object') {
     if (responseData.message) {
-      // ترجمه پیام‌های رایج بک‌اند به فارسی روان
       const msg = responseData.message;
       if (msg.includes('Account is inactive or does not exist')) {
         return 'حساب کاربری با این ایمیل یافت نشد یا غیرفعال است.';
@@ -58,7 +34,6 @@ function parseErrorMessage(status, responseData) {
     }
   }
 
-  // پیام‌های پیش‌فرض بر اساس کد وضعیت HTTP
   switch (status) {
     case 400:
       return 'اطلاعات ارسالی نامعتبر است. لطفاً ورودی‌ها را بررسی کنید.';
@@ -81,13 +56,6 @@ function parseErrorMessage(status, responseData) {
   }
 }
 
-/**
- * تابع مرکزی ارسال درخواست به سرور همراه با هدر احراز هویت.
- * 
- * @param {string} endpoint - مسیر اندپوینت (مثلاً /books یا /loans/my-loans)
- * @param {object} options - تنظیمات درخواست
- * @returns {Promise<any>}
- */
 async function request(endpoint, options = {}) {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const url = `${API_BASE_URL}${cleanEndpoint}`;
@@ -101,7 +69,6 @@ async function request(endpoint, options = {}) {
     headers['Content-Type'] = 'application/json';
   }
 
-  // خواندن توکن از کوکی و اضافه کردن به هدر در صورت لاگین بودن
   const token = getAuthToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -114,7 +81,6 @@ async function request(endpoint, options = {}) {
       headers
     });
   } catch (networkError) {
-    console.error('[API] خطای اتصال به شبکه:', networkError);
     throw new ApiError(
       'امکان برقراری ارتباط با سرور کتابخانه وجود ندارد. لطفاً اینترنت خود را بررسی کنید.',
       0,
@@ -127,29 +93,23 @@ async function request(endpoint, options = {}) {
   if (contentType && contentType.includes('application/json')) {
     try {
       data = await response.json();
-    } catch (parseError) {
-      console.warn('[API] خطا در پارس کردن پاسخ JSON:', parseError);
+    } catch {
+      data = null;
     }
   }
 
   if (!response.ok) {
-    // در صورت دریافت خطای 401 در صفحات داخلی، کاربر خارج می‌شود
     if (response.status === 401 && !endpoint.includes('/auth/login')) {
-      console.warn('[API] دریافت خطای 401 - توکن منقضی شده است.');
       setTimeout(() => logout(), 500);
     }
 
     const message = parseErrorMessage(response.status, data);
-    console.error(`[API] درخواست ناموفق [${response.status} ${cleanEndpoint}]:`, message, data);
     throw new ApiError(message, response.status, data);
   }
 
   return data;
 }
 
-/**
- * آبجکت دسترسی سریع به متدهای HTTP
- */
 export const api = {
   get(endpoint, options = {}) {
     return request(endpoint, {

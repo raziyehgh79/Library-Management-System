@@ -1,18 +1,8 @@
-/**
- * سامانه مدیریت کتابخانه - منطق صفحه امانت‌های من (My Loans Page Logic)
- * 
- * وظایف این ماژول:
- * - استعلام امانت‌های دانشجو از اندپوینت /api/loans/my-loans
- * - محاسبه آمار امانت‌ها (کل، امانت‌های فعال، کتاب‌های تحویل‌شده)
- * - عملیات بازگرداندن کتاب، اخذ تاییدیه، نشانگر لودینگ و باطل‌سازی خودکار کش
- */
-
 import { api } from './api.js';
 import { requireAuth } from './auth.js';
 import { clearBooksCache } from './cache.js';
 import { setupHeaderUser, formatDate, escapeHtml, showAlert } from './utils.js';
 
-// گارد صفحه: جلوگیری از دسترسی کاربران غیرمجاز
 requireAuth();
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -26,9 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let myLoans = [];
 
-  /**
-   * دریافت سوابق امانت‌های کاربر جاری از سرور.
-   */
   async function loadLoans() {
     try {
       showLoadingRows();
@@ -42,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw new Error('فرمت پاسخ فهرست امانت‌ها از سرور نامعتبر است.');
       }
     } catch (error) {
-      console.error('[امانت‌ها] خطا در دریافت فهرست امانت‌ها:', error);
+      console.error('خطا در دریافت فهرست امانت‌ها:', error);
       showAlert(
         alertContainer,
         'دریافت تاریخچه امانت‌های شما با خطا مواجه شد. لطفاً دوباره تلاش فرمایید.',
@@ -61,9 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /**
-   * نمایش ردیف‌های اسکلتون تا زمان دریافت پاسخ شبکه.
-   */
   function showLoadingRows() {
     if (!loansTableBody) return;
     loansTableBody.innerHTML = Array.from({ length: 3 }).map(() => `
@@ -75,11 +59,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  /**
-   * محاسبه و به‌روزرسانی کارت‌های آماری سوابق امانت.
-   * 
-   * @param {Array} loans
-   */
   function updateStatistics(loans) {
     const total = loans.length;
     const active = loans.filter(l => l.status === 'active' || l.status === 'overdue').length;
@@ -95,11 +74,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /**
-   * رندر ردیف‌های جدول سوابق امانت به همراه برچسب‌های وضعیت فارسی.
-   * 
-   * @param {Array} loans
-   */
   function renderLoans(loans) {
     if (!loansTableBody) return;
 
@@ -162,13 +136,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
     }).join('');
 
-    // اتصال رویدادهای بازگرداندن کتاب
     attachReturnListeners();
   }
 
-  /**
-   * اتصال کلیک به تمام دکمه‌های «بازگرداندن کتاب».
-   */
   function attachReturnListeners() {
     const returnButtons = loansTableBody.querySelectorAll('.return-btn');
     returnButtons.forEach(btn => {
@@ -179,12 +149,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  /**
-   * ارسال درخواست بازگرداندن کتاب به سرور.
-   * 
-   * @param {string} loanId
-   * @param {HTMLButtonElement} buttonEl
-   */
   async function handleReturnBook(loanId, buttonEl) {
     if (!confirm('آیا از بازگرداندن این کتاب اطمینان دارید؟')) {
       return;
@@ -195,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     buttonEl.textContent = 'در حال ثبت...';
 
     try {
-      // ارسال درخواست به POST /api/loans/:id/return
       const response = await api.post(`/loans/${loanId}/return`, {
         notes: 'تحویل داده شده از طریق پنل دانشجویی'
       });
@@ -207,26 +170,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         5000
       );
 
-      /**
-       * باطل‌سازی کش در زمان پس دادن کتاب:
-       * با تحویل کتاب، یک نسخه به موجودی کتابخانه در سرور افزوده می‌شود.
-       * با فراخوانی clearBooksCache() تضمین می‌کنیم که کاربر در صفحه کتاب‌ها، موجودی جدید را خواهد دید.
-       */
       clearBooksCache();
 
-      // تغییر وضعیت در حافظه کلاینت
       const targetLoan = myLoans.find(l => l.id === loanId);
       if (targetLoan) {
         targetLoan.status = 'returned';
         targetLoan.returnDate = new Date().toISOString();
       }
 
-      // رندر مجدد جدول و ارقام آماری
       renderLoans(myLoans);
       updateStatistics(myLoans);
 
     } catch (error) {
-      console.error('[امانت‌ها] خطا در بازگرداندن کتاب:', error);
+      console.error('خطا در بازگرداندن کتاب:', error);
       showAlert(
         alertContainer,
         error.message || 'عملیات بازگرداندن کتاب انجام نشد. لطفاً مجدداً تلاش کنید.',

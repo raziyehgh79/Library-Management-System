@@ -1,27 +1,13 @@
-/**
- * سامانه مدیریت کتابخانه - منطق صفحه کتاب‌ها (Books Page Logic)
- * 
- * وظایف این ماژول:
- * - مدیریت کش ۵ دقیقه‌ای نتایج در localStorage
- * - نمایش کارت‌های واکنش‌گرا و فارسی برای کتاب‌ها
- * - جستجوی بلادرنگ بر اساس عنوان، نویسنده یا شابک (ISBN)
- * - فیلتر دسته‌بندی و وضعیت موجودی
- * - پنجره مودال مشخصات کامل کتاب
- * - فرآیند امانت گرفتن کتاب و باطل‌سازی خودکار کش
- */
-
 import { api } from './api.js';
 import { requireAuth, getCurrentUser } from './auth.js';
 import { getBooksCache, setBooksCache, clearBooksCache } from './cache.js';
 import { setupHeaderUser, escapeHtml, showAlert } from './utils.js';
 
-// گارد صفحه: جلوگیری از دسترسی کاربران غیرمجاز
 requireAuth();
 
 document.addEventListener('DOMContentLoaded', async () => {
   setupHeaderUser();
 
-  // المنت‌های DOM
   const booksGrid = document.getElementById('booksGrid');
   const searchInput = document.getElementById('searchInput');
   const categoryFilter = document.getElementById('categoryFilter');
@@ -31,22 +17,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modalBody = document.getElementById('modalBody');
   const modalClose = document.getElementById('modalClose');
 
-  // حافظه محلی کتاب‌ها (جهت جستجو و فیلتر سریع بدون درخواست اضافه به سرور)
   let allBooks = [];
 
-  /**
-   * بارگذاری کتاب‌ها از کش ۵ دقیقه‌ای localStorage یا از طریق API سرور.
-   * 
-   * نکته آموزشی (مورد ارزیابی نمره پروژه):
-   * ۱. ابتدا کش localStorage بررسی می‌شود.
-   * ۲. اگر داده معتبر باشد و سن آن کمتر از ۵ دقیقه باشد، مستقیماً از کش لود می‌شود.
-   * ۳. اگر کش وجود نداشته باشد یا منقضی شده باشد، درخواست /api/books ارسال شده و نتیجه در کش ذخیره می‌شود.
-   */
   async function loadBooks() {
     try {
       showLoadingGrid();
 
-      // گام اول: بررسی کش ۵ دقیقه‌ای
       const cachedData = getBooksCache();
       if (cachedData && cachedData.length > 0) {
         allBooks = cachedData;
@@ -54,18 +30,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      // گام دوم: دریافت اطلاعات تازه از سرور
       const response = await api.get('/books');
       if (response && Array.isArray(response.data)) {
         allBooks = response.data;
-        // ذخیره در کش ۵ دقیقه‌ای localStorage
         setBooksCache(allBooks);
         renderBooks(allBooks);
       } else {
         throw new Error('فرمت پاسخ فهرست کتاب‌ها از سرور نامعتبر است.');
       }
     } catch (error) {
-      console.error('[کتاب‌ها] خطا در بارگذاری:', error);
+      console.error('خطا در بارگذاری کتاب‌ها:', error);
       showAlert(
         alertContainer,
         'دریافت فهرست کتاب‌ها از سرور با خطا مواجه شد. لطفاً اتصال اینترنت را بررسی فرمایید.',
@@ -84,9 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /**
-   * دریافت دسته‌بندی‌ها برای پر کردن فیلتر انتخابی موضوعات.
-   */
   async function loadCategories() {
     if (!categoryFilter) return;
     try {
@@ -101,13 +72,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         categoryFilter.appendChild(option);
       });
     } catch (error) {
-      console.warn('[کتاب‌ها] امکان دریافت لیست موضوعات فراهم نشد:', error);
+      console.warn('امکان دریافت لیست موضوعات فراهم نشد:', error);
     }
   }
 
-  /**
-   * نمایش اسکلتون‌های متحرک لودینگ تا زمان دریافت داده‌ها.
-   */
   function showLoadingGrid() {
     if (!booksGrid) return;
     booksGrid.innerHTML = Array.from({ length: 6 }).map(() => `
@@ -120,11 +88,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  /**
-   * رندر کارت‌های کتاب در گرید با ایمن‌سازی کامل در برابر حملات XSS.
-   * 
-   * @param {Array} books
-   */
   function renderBooks(books) {
     if (!booksGrid) return;
 
@@ -185,15 +148,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
     }).join('');
 
-    // اتصال رویداد کلیک برای دکمه‌های امانت و جزئیات
     attachActionListeners();
   }
 
-  /**
-   * اتصال Event Listener ها به دکمه‌های موجود در کارت‌ها.
-   */
   function attachActionListeners() {
-    // دکمه‌های امانت گرفتن کتاب
     const borrowButtons = booksGrid.querySelectorAll('.borrow-btn');
     borrowButtons.forEach(btn => {
       btn.addEventListener('click', async (e) => {
@@ -202,7 +160,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    // دکمه‌های مشاهده جزئیات کتاب
     const detailsButtons = booksGrid.querySelectorAll('.details-btn');
     detailsButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -213,18 +170,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  /**
-   * اجرای فرآیند امانت گرفتن کتاب.
-   * 
-   * نکات کلیدی ارزیابی:
-   * ۱. شناسه کاربر (userId) به همراه bookId به اندپوینت POST /loans ارسال می‌شود.
-   * ۲. دکمه در زمان ارسال در وضعیت لودینگ قرار می‌گیرد تا از کلیک مجدد جلوگیری شود.
-   * ۳. با موفقیت‌آمیز بودن، کش کتاب‌ها بلافاصله با clearBooksCache() باطل می‌شود.
-   * ۴. موجودی کتاب به شکل بلادرنگ در رابط کاربری کاهش یافته و به‌روز می‌شود (بدون رفرش صفحه).
-   * 
-   * @param {string} bookId
-   * @param {HTMLButtonElement} buttonEl
-   */
   async function handleBorrowBook(bookId, buttonEl) {
     const user = getCurrentUser();
     if (!user || !user.id) {
@@ -237,7 +182,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     buttonEl.textContent = 'در حال ثبت...';
 
     try {
-      // ارسال درخواست به POST /api/loans با هدر توکن
       const response = await api.post('/loans', {
         bookId: bookId,
         userId: user.id
@@ -250,13 +194,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         5000
       );
 
-      /**
-       * باطل‌سازی کش (Cache Invalidation):
-       * کش کتاب‌ها پاک می‌شود تا موجودی کاهش‌یافته در مراجعات بعدی مجدداً از سرور استعلام شود.
-       */
       clearBooksCache();
 
-      // به‌روزرسانی زنده تعداد در حافظه کلاینت
       const book = allBooks.find(b => b.id === bookId);
       if (book) {
         book.availableCopies = Math.max(0, (book.availableCopies || 1) - 1);
@@ -267,33 +206,27 @@ document.addEventListener('DOMContentLoaded', async () => {
       applyFilters();
 
     } catch (error) {
-      console.error('[کتاب‌ها] خطا در امانت گرفتن کتاب:', error);
+      console.error('خطا در امانت گرفتن کتاب:', error);
       showAlert(alertContainer, error.message || 'ثبت امانت کتاب انجام نشد.', 'error');
       buttonEl.disabled = false;
       buttonEl.textContent = originalText;
     }
   }
 
-  /**
-   * اعمال جستجوی بلادرنگ کاربر و فیلترهای دسته‌بندی و وضعیت موجودی.
-   */
   function applyFilters() {
     const query = (searchInput?.value || '').trim().toLowerCase();
     const selectedCategory = categoryFilter?.value || '';
     const selectedAvailability = availabilityFilter?.value || 'all';
 
     const filtered = allBooks.filter(book => {
-      // جستجو در عنوان، نویسنده و شابک
       const titleMatch = (book.title || '').toLowerCase().includes(query);
       const authorMatch = (book.author || '').toLowerCase().includes(query);
       const isbnMatch = (book.isbn || '').toLowerCase().includes(query);
       const searchMatch = !query || titleMatch || authorMatch || isbnMatch;
 
-      // فیلتر موضوعی
       const bookCategoryName = typeof book.category === 'object' && book.category ? book.category.name : (book.category || '');
       const categoryMatch = !selectedCategory || bookCategoryName === selectedCategory;
 
-      // فیلتر وضعیت موجودی
       const isAvailable = (book.available !== false) && (book.availableCopies > 0);
       let availMatch = true;
       if (selectedAvailability === 'available') availMatch = isAvailable;
@@ -305,16 +238,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderBooks(filtered);
   }
 
-  // شنوندگان تغییرات جستجو و فیلترها
   searchInput?.addEventListener('input', applyFilters);
   categoryFilter?.addEventListener('change', applyFilters);
   availabilityFilter?.addEventListener('change', applyFilters);
 
-  /**
-   * نمایش پنجره مودال اطلاعات کامل کتاب.
-   * 
-   * @param {object} book
-   */
   function showBookModal(book) {
     if (!modal || !modalBody) return;
     const categoryName = typeof book.category === 'object' && book.category ? book.category.name : (book.category || 'عمومی');
@@ -357,7 +284,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     modal.setAttribute('aria-hidden', 'false');
   }
 
-  // بستن پنجره مودال
   modalClose?.addEventListener('click', () => {
     modal.classList.remove('modal-open');
     modal.setAttribute('aria-hidden', 'true');
@@ -370,6 +296,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // بارگذاری اولیه
   await Promise.all([loadBooks(), loadCategories()]);
 });

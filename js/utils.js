@@ -1,22 +1,5 @@
-/**
- * سامانه مدیریت کتابخانه - توابع و ابزارهای کمکی (Utils)
- * 
- * شامل:
- * - ضد عفونی کردن متن‌ها در برابر حملات تزریق اسکریپت (XSS)
- * - تبدیل و قالب‌بندی تاریخ‌ها به تقویم شمسی / محلی
- * - نمایش هشدارهای تعاملی به زبان فارسی
- * - مدیریت اطلاعات کاربر در هدر و منوی واکنش‌گرای موبایل
- */
-
 import { getCurrentUser, logout } from './auth.js';
 
-/**
- * پاک‌سازی کاراکترهای خطرناک HTML برای جلوگیری از آسیب‌پذیری XSS
- * قبل از تزریق متن‌های دریافتی از سرور به داخل قالب‌های رشته‌ای.
- * 
- * @param {any} input - ورودی کاربر یا سرور
- * @returns {string} رشته امن‌سازی‌شده
- */
 export function escapeHtml(input) {
   if (input === null || input === undefined) return '';
   const str = String(input);
@@ -31,12 +14,6 @@ export function escapeHtml(input) {
   return str.replace(/[&<>"'/]/g, match => entityMap[match]);
 }
 
-/**
- * تبدیل رشته تاریخ ISO به فرمت استاندارد شمسی و خوانا.
- * 
- * @param {string|Date} dateVal - مقدار تاریخ
- * @returns {string} تاریخ فارسی (مثال: ۱۴۰۵/۰۶/۳۰)
- */
 export function formatDate(dateVal) {
   if (!dateVal) return '—';
   try {
@@ -52,14 +29,6 @@ export function formatDate(dateVal) {
   }
 }
 
-/**
- * نمایش پیام‌های هشدار، موفقیت یا خطا در ظرف مشخص‌شده.
- * 
- * @param {string|HTMLElement} target - شناسه کانتینر یا المنت DOM
- * @param {string} message - متن پیام
- * @param {'success'|'error'|'info'} type - نوع هشدار
- * @param {number} autoDismissMs - زمان محو خودکار (میلی‌ثانیه)
- */
 export function showAlert(target, message, type = 'error', autoDismissMs = 6000) {
   const container = typeof target === 'string' ? document.getElementById(target) : target;
   if (!container) return;
@@ -80,9 +49,6 @@ export function showAlert(target, message, type = 'error', autoDismissMs = 6000)
   }
 }
 
-/**
- * مقداردهی اولیه اطلاعات دانشجو در هدر (نام و آواتار) و اتصال دکمه خروج.
- */
 export function setupHeaderUser() {
   const user = getCurrentUser();
   const userNameEl = document.getElementById('userName');
@@ -100,7 +66,6 @@ export function setupHeaderUser() {
     }
   }
 
-  // رویداد خروج از سیستم
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -110,13 +75,9 @@ export function setupHeaderUser() {
     });
   }
 
-  // راه‌اندازی منوی واکنش‌گرای موبایل
   setupMobileNav();
 }
 
-/**
- * راه‌اندازی دکمه تاگل منوی موبایل.
- */
 function setupMobileNav() {
   const menuToggle = document.getElementById('menuToggle');
   const nav = document.getElementById('primaryNav');
